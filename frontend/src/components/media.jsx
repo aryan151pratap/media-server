@@ -37,9 +37,9 @@ const Media = function ({ user }) {
 		}
 	}, [])
 
-	// useEffect(() => {
-	// 	setCurrFolder("");
-	// }, [domain])
+	useEffect(() => {
+		setCurrFolder("");
+	}, [domain])
 
 	const handleFolder = async function () {
 		if (!domain) return;
