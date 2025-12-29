@@ -3,7 +3,6 @@ const router = express.Router();
 const User = require("../model/user");
 const bcrypt = require("bcrypt");
 
-
 router.post("/auth", async (req, res) => {
   const { name, email, password } = req.body;
   const user = await User.findOne({email});
@@ -17,6 +16,9 @@ router.post("/login", async (req, res) => {
 	const { email, password } = req.body;
 	const user = await User.findOne({email});
 	if(!user) return res.status(400).json({message: "user not found!"});
+	if (!user.password && user.googleId) {
+		return res.status(400).json({ message: "Use Google login" });
+	}
 	const isMatch = await bcrypt.compare(password, user.password);
 	if (!isMatch) return res.status(400).json({ message: "Invalid password" });
 	res.status(200).json(user);

@@ -4,6 +4,7 @@ const upload = require("./routes/api");
 const load = require("./routes/load");
 const saveApi = require("./routes/userData");
 const media = require("./routes/media");
+const google = require("./middleware/google");
 
 const connectDB = require("./db");
 const cors = require("cors");
@@ -25,6 +26,7 @@ app.use("/uploads", express.static("D:/media"));
 app.use("/load", load);
 app.use("/api", upload);
 app.use("/user", saveApi);
+app.use("/google", google);
 app.use("/media", media);
 
 app.listen(3000, () => {

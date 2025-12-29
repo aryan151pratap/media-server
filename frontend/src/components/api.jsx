@@ -73,7 +73,7 @@ const Api = function({user}){
 	}
 
 	return(
-		<div className="w-full h-full bg-zinc-900 p-2 sm:p-6 text-zinc-200">
+		<div className="h-full bg-zinc-900 p-2 sm:p-6 text-zinc-200">
 
 			<div className="flex items-center justify-between mb-6">
 				<h1 className="text-lg font-mono font-semibold">🔑 API Manager</h1>
@@ -143,7 +143,7 @@ const Api = function({user}){
 				)}
 			</div>
 
-			<div className="">
+			<div className="mt-4">
 				<AddMedia api={api} apiList={apiList} user={user}/>
 			</div>
 		</div>

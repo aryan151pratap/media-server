@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { FaCheck, FaCopy, FaPlay, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 
 
-const Audio = function ({ url }) {
+const Audio = function ({ url, size }) {
 	const audioRef = useRef(null);
 
 	const [playing, setPlaying] = useState(false);
@@ -82,13 +82,16 @@ const Audio = function ({ url }) {
 			<audio ref={audioRef} src={url} />
 
 			<div className="flex items-center gap-4">
-				<button
-					onClick={togglePlay}
-					className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-600 hover:bg-blue-500 transition"
-				>
-					<span className="text-xl">{playing ? "⏸" : "▶️"}</span>
-				</button>
+				<div className="flex flex-col gap-0.5 items-center bg-blue-400 rounded p-0.5">
+					<button
+						onClick={togglePlay}
+						className="w-12 p-0.5 flex flex-col items-center justify-center rounded-md bg-blue-600 hover:bg-blue-500 transition"
+					>
+						<span className="text-xl">{playing ? "⏸" : "▶️"}</span>
+					</button>
+					<span className="w-full text-center rounded bg-blue-600 p-0.5 text-[10px] text-blue-100">{size}</span>
 
+				</div>
 				<div className="flex-1">
 					<input
 						type="range"
@@ -154,6 +157,7 @@ const Audio = function ({ url }) {
 					}
 				</button>
 			</div>
+			
 		</div>
 	);
 };

@@ -22,7 +22,10 @@ function getFilesByFolder(id, siteName, folderName) {
 
 	const files = fs.readdirSync(folderPath, { withFileTypes: true })
 	return files.filter(f => f.isFile())
-		.map(f => f.name);
+		.map(f => ({
+			name: f.name,
+			size: fs.statSync(path.join(folderPath, f.name)).size
+		}));
 }
 
 

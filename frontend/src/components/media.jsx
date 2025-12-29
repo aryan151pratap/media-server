@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Files from "./files";
+import { FaExpand } from "react-icons/fa";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Media = function ({ user }) {
@@ -14,6 +15,7 @@ const Media = function ({ user }) {
 	const [currUser, setCurrUser] = useState(null);
 	const [change, setChange] = useState(false);
 	const [currId, setCurrId] = useState(null);
+	const [fullMedia, setFullMedia] = useState(false);
 
 	useEffect(() => {
 		const getApis = async function(){
@@ -166,8 +168,8 @@ const Media = function ({ user }) {
 
 			</div>
 			{ currUser &&
-			<div className="flex flex-row sm:gap-2 gap-1 items-center justify-between text-sm p-2 px-4 rounded-md bg-zinc-700/30 mb-2">
-				<div className="flex flex-row items-center sm:gap-2 gap-1">
+			<div className="flex flex-row sm:gap-2 gap-1 items-center justify-between text-sm p-2 px-4 rounded-md bg-zinc-700/30 mb-2 overflow-auto custom-scrollbar">
+				<div className="shrink-0 flex flex-row items-center sm:gap-2 gap-1">
 					<p>name:</p>
 					<p className="text-green-400 bg-green-500/10 px-2 p-1 rounded">{currUser?.name}</p>
 				</div>
@@ -175,55 +177,79 @@ const Media = function ({ user }) {
 					<p>Id:</p>
 					<p className="text-green-400 bg-green-500/10 px-2 p-1 rounded">{currUser?._id}</p>
 				</div>
-				<div className="flex flex-row items-center sm:gap-2 gap-1">
+				<div className="shrink-0 flex flex-row items-center sm:gap-2 gap-1">
 					<p>api / folder:</p>
 					<p className="text-green-400 bg-green-500/10 px-2 p-1 rounded">{domain}</p>
 				</div>
 			</div>
 			}
 			{domain &&
-				<pre className="sm:text-md text-xs line-clamp-2 overflow-auto px-2 p-2 bg-zinc-500/10 rounded mb-4">
+				<pre className="sm:text-md text-xs line-clamp-2 px-2 p-2 bg-zinc-500/10 rounded mb-4 overflow-auto custom-scrollbar">
 					<span className="text-green-500 bg-green-900/30 rounded px-2 p-1">url:</span> {media}
 					<span className="px-2 p-1 bg-zinc-500/20 rounded">{currUser?._id}</span>/
 					<span className="px-2 p-1 bg-zinc-500/20 rounded">{domain}</span>
 				</pre>
 			}
 
-			<div className="w-full flex h-[60vh] bg-zinc-800/60 rounded-lg overflow-hidden border border-zinc-700">
+			<div className={`${
+					fullMedia
+					? "fixed inset-0 z-[100] bg-black/20 backdrop-blur-sm p-4"
+					: "w-full h-[60vh] bg-zinc-800/60"} rounded-lg border border-zinc-700
+				`}
+			>
+				<div className={`${fullMedia && "bg-zinc-900 border border-zinc-700"} w-full h-full flex overflow-hidden rounded-lg`}>
+					<div className="shrink-0 w-[38%] sm:w-[26%] md:w-[20%] flex flex-col border-r border-zinc-700 bg-zinc-900/70">
+						<div className="px-3 py-2 text-xs text-zinc-400 border-b border-zinc-700">
+							Folders
+						</div>
 
-				<div className="shrink-0 w-[40%] sm:w-[25%] md:w-[20%] border-r border-zinc-700 bg-zinc-900/60">
-					<div className="px-3 py-2 text-xs text-zinc-400 border-b border-zinc-700">Folders</div>
-					{(!domain || !folders?.[domain] || folders[domain].length === 0) && (
-						<div className="px-3 py-2 text-sm text-zinc-500">
-							No folders
-						</div>
-					)}
-					{domain && folders?.[domain]?.map((i, index) => (
-						<button
-							key={index}
-							onClick={() => setCurrFolder(i)}
-							className={`shrink-0 ${currFolder == i ? "bg-zinc-300/10" : ""} w-full text-left px-3 py-2 text-sm hover:bg-zinc-700/40 transition cursor-pointer`}
-						>
-							📂 {i}
-						</button>
-					))}
-				</div>
+						<div className="flex flex-col h-full overflow-auto custom-scrollbar">
+							{(!domain || !folders?.[domain]?.length) && (
+								<div className="px-3 py-2 text-sm text-zinc-500">
+									No folders
+								</div>
+							)}
 
-				<div className="w-[60%] sm:w-[75%] md:w-[80%] h-full flex flex-col text-sm text-zinc-400 overflow-auto">
-					
-					<div className="w-full h-full">
-						{domain && currFolder ? 
-						<div className="h-full">
-							<Files currFolder={currFolder} domain={domain} user={currUser}/>
+							{domain && folders[domain]?.map((i, index) => (
+								<button
+									key={index}
+									onClick={() => setCurrFolder(i)}
+									className={`flex w-full text-left px-3 py-2 text-sm transition
+										${currFolder === i ? "bg-zinc-300/10" : ""}
+										hover:bg-zinc-700/40`}
+								>
+									<span className="shrink-0">📂 {i}</span>
+								</button>
+							))}
 						</div>
-						:
-						<div className="p-4">
-							Select a folder to view media files
+
+						<div className="p-2">
+							<button
+								onClick={() => setFullMedia(e => !e)}
+								className="p-1 rounded border border-zinc-300/30 hover:bg-zinc-300/30 cursor-pointer"
+								>
+								<FaExpand />
+							</button>
 						</div>
-						}
 					</div>
+
+					<div className="relative w-full h-full flex flex-col bg-zinc-900/40">
+						<div className="w-full h-full overflow-hidden absolute z-50">
+							{domain && currFolder ? (
+								<Files currFolder={currFolder} domain={domain} user={currUser} />
+							) : (
+								<div className="h-full flex justify-center items-center text-sm text-zinc-500">
+								Select a folder to view media files
+								</div>
+							)}
+						</div>
+						<div className="w-full h-full bg-gradient-to-br from-zinc-950 via-zinc-800 to-zinc-950">
+						</div>
+					</div>
+
 				</div>
 			</div>
+
 
 			<div className="mt-3 text-sm font-mono flex gap-2 items-center">
 				<span className="text-zinc-400">Message:</span>
@@ -235,6 +261,7 @@ const Media = function ({ user }) {
 					<span className="text-zinc-500">No message</span>
 				)}
 			</div>
+
 		</div>
 	);
 };

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import Google_Login from "./googleLogin";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -69,7 +70,7 @@ const Login = function ({ setUser }) {
   };
 
   return (
-    <div className="w-full h-screen flex items-center justify-center">
+    <div className="w-full flex flex-col gap-1 h-screen flex items-center justify-center">
       <form
         onSubmit={handleAuth}
         className="w-[320px] flex flex-col gap-3 p-5 rounded-lg border border-zinc-700 bg-zinc-900 text-white"
@@ -129,7 +130,10 @@ const Login = function ({ setUser }) {
         >
           {login ? "Create an account" : "Already have an account?"}
         </p>
+
+        <Google_Login login={login} setLoading={setLoading} setMessage={setMessage} setUser={setUser}/>
       </form>
+
     </div>
   );
 };

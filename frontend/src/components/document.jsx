@@ -23,7 +23,7 @@ const FILE_MAP = {
 
 const getExt = (name) => name?.split(".").pop().toLowerCase();
 
-const DocumentCard = ({ fileUrl, filename }) => {
+const DocumentCard = ({ fileUrl, filename, size }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
@@ -51,6 +51,7 @@ const DocumentCard = ({ fileUrl, filename }) => {
       <div className={`flex items-center gap-3 p-3 ${meta.color}`}>
         <Icon className="shrink-0 text-xl text-white" />
         <p className="text-sm text-white truncate">{filename}</p>
+        <span className={`shrink-0 bg-${meta.color.split("-")[1]}-700 px-1 p-0.5 rounded text-${meta.color.split("-")[1]}-100`}>{size}</span>
       </div>
 
       <div className="flex justify-between items-center p-3 text-sm text-zinc-300">

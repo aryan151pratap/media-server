@@ -7,6 +7,7 @@ import Media from "./components/media";
 import Login from "./components/login";
 import "./app.css";
 import SideBar from "./sideBar";
+import UserProfile from "./account";
 
 const App = function () {
   const [user, setUser] = useState(null);
@@ -18,29 +19,33 @@ const App = function () {
         <div className="sticky top-0 z-50 bg-zinc-900 w-full">
           <Header user={user} setSignup={setSignup}/>
         </div>
-        <div className="h-full w-full flex flex-row justify-center md:justify-normal overflow-auto custom-scrollbar">
-          <div className="hidden md:flex w-fit sticky top-0">
-            <SideBar showSide={showSide} setShowSide={setShowSide} user={user}/>
+
+        <div className="h-full w-full flex flex-row overflow-hidden">
+  
+          <div className={`hidden md:flex shrink-0 transition-all duration-300 ${showSide ? "w-64" : "w-10"}`}>
+            <SideBar showSide={showSide} setShowSide={setShowSide} user={user} />
           </div>
-          
-         <div className="w-full flex justify-center">
-           <div className={`${showSide ? "w-full" : "lg:w-[70%]"} w-full h-full`}>
-            {!user ?
-              <Routes>
-                <Route path="*" element={<Login setUser={setUser}/>} />
-                <Route path="/home" element={<Home />} />
-              </Routes>
-              :
-              <Routes>
-                <Route path="/home" element={<Home user={user}/>} />
-                <Route path="/media" element={<Media user={user}/>} />
-                <Route path="/api" element={<Api user={user}/>} />
-                <Route path="*" element={<Home user={user}/>} />
-              </Routes>
-            }
+
+          <div className="flex-1 min-w-0 overflow-auto custom-scrollbar flex justify-center">
+            <div className={`w-full ${!showSide && "lg:max-w-[80%]"} h-full transition-all duration-500`}>
+              {!user ? (
+                <Routes>
+                  <Route path="*" element={<Login setUser={setUser} />} />
+                  <Route path="/home" element={<Home />} />
+                </Routes>
+              ) : (
+                <Routes>
+                  <Route path="/home" element={<Home user={user} />} />
+                  <Route path="/media" element={<Media user={user} />} />
+                  <Route path="/api" element={<Api user={user} />} />
+                  <Route path="/account" element={<UserProfile user={user} />} />
+                  <Route path="*" element={<Home user={user} />} />
+                </Routes>
+              )}
             </div>
-         </div>
+          </div>
         </div>
+
       </div>
     </BrowserRouter>
   );
