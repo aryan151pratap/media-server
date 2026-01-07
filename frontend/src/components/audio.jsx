@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { FaCheck, FaCopy, FaPlay, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 
 
-const Audio = function ({ url, size }) {
+const Audio = function ({ url, size, dark }) {
 	const audioRef = useRef(null);
 
 	const [playing, setPlaying] = useState(false);
@@ -78,7 +78,7 @@ const Audio = function ({ url, size }) {
 	},[copyCheck])
 
 	return (
-		<div className="w-full max-w-xl bg-zinc-900 border border-zinc-700 rounded-xl p-2 text-zinc-200">
+		<div className={`w-full max-w-xl ${dark ? "bg-zinc-900 border-zinc-700" : "bg-blue-200/40 border-blue-300"} border rounded-xl p-2 text-zinc-200`}>
 			<audio ref={audioRef} src={url} />
 
 			<div className="flex items-center gap-4">
@@ -111,7 +111,7 @@ const Audio = function ({ url, size }) {
 			<div className="flex items-center sm:gap-3 gap-1 overflow-auto custom-scrollbar p-1">
 				<button
 					onClick={toggleMute}
-					className="text-sm"
+					className={`${dark ? "" : "text-blue-500"} text-sm`}
 				>
 					{muted || volume === 0 ? 
 					<FaVolumeMute/>
@@ -133,7 +133,7 @@ const Audio = function ({ url, size }) {
 				<select
 					value={speed}
 					onChange={changeSpeed}
-					className="outline-none bg-zinc-800 border border-zinc-700 focus:border-zinc-500 text-xs rounded px-2 py-1 text-zinc-200"
+					className={`outline-none ${dark ? "bg-zinc-800 border-zinc-700 text-zinc-200 focus:border-zinc-500" : "bg-white/80 text-blue-500 focus:border-blue-500 border-blue-300"} border text-xs rounded px-2 py-1`}
 				>
 					<option value={0.5}>0.5×</option>
 					<option value={0.75}>0.75×</option>

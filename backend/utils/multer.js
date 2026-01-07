@@ -7,8 +7,8 @@ function mediaUploader() {
 	return multer({
 		storage: multer.diskStorage({
 			destination(req, file, cb) {
-				const { name, site, type } = req.params;
-				const folderPath = path.join("D:/media", name, site, type);
+				const { id, site, type } = req.params;
+				const folderPath = path.join("D:/media", id, site, type);
 
 				if (!fs.existsSync(folderPath)) {
 					fs.mkdirSync(folderPath, { recursive: true });

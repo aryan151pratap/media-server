@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { FaUpload, FaCheck, FaTimes, FaFile, FaVideo, FaImage, FaFileAudio, FaFilePdf } from "react-icons/fa";
 
-const AddMedia = ({ api, apiList }) => {
+const AddMedia = ({ api, apiList, dark }) => {
 	const [selectApi, setSelectApi] = useState("");
 	const [mediaType, setMediaType] = useState("");
 	const [file, setFile] = useState(null);
@@ -9,24 +10,24 @@ const AddMedia = ({ api, apiList }) => {
 	const [data, setData] = useState(null);
 	const [uploading, setUploading] = useState(false);
 
-	const getAcceptType = () => {
-		if (mediaType === "videos") return ".mp4,.mkv,.avi,.mov,.webm,.flv";
-		if (mediaType === "images") return "image/*";
-		if (mediaType === "audios") return ".mp3,.wav,.ogg,.m4a";
-		if (mediaType === "documents") return ".pdf,.doc,.docx,.txt";
-		return "";
-	};
+	const mediaTypes = [
+		{ value: "videos", label: "Videos", icon: <FaVideo />, accept: ".mp4,.mkv,.avi,.mov,.webm,.flv" },
+		{ value: "images", label: "Images", icon: <FaImage />, accept: "image/*" },
+		{ value: "audios", label: "Audios", icon: <FaFileAudio />, accept: ".mp3,.wav,.ogg,.m4a" },
+		{ value: "documents", label: "Documents", icon: <FaFilePdf />, accept: ".pdf,.doc,.docx,.txt" }
+	];
 
 	useEffect(() => {
-		// setFile(null);
-		// setProgress(0);
-		// setMessage(null);
-		// setData(null);
-		// setUploading(false);
+		setFile(null);
+		setProgress(0);
+		setMessage(null);
+		setData(null);
+		setUploading(false);
 	}, [mediaType, selectApi]);
 
 	const handleFileChange = (e) => {
-		setFile(e.target.files[0]);
+		const selectedFile = e.target.files[0];
+		setFile(selectedFile);
 		setProgress(0);
 		setMessage(null);
 		setData(null);
@@ -37,7 +38,6 @@ const AddMedia = ({ api, apiList }) => {
 		if (!file || !mediaType || !selectApi || uploading) return;
 
 		setUploading(true);
-
 		const formData = new FormData();
 		formData.append("file", file);
 
@@ -53,14 +53,14 @@ const AddMedia = ({ api, apiList }) => {
 
 		xhr.onload = () => {
 			setUploading(false);
-			if (xhr.status !== 200) {
+			if (xhr.status === 200) {
+				setMessage({ success: "Upload successful" });
+				setData(xhr.response);
+				setProgress(100);
+			} else {
 				setMessage({ error: xhr.response?.error || "Upload failed" });
 				setProgress(0);
-				return;
 			}
-			setMessage({ success: "Upload successful" });
-			setData(xhr.response);
-			setProgress(100);
 		};
 
 		xhr.onerror = () => {
@@ -72,84 +72,136 @@ const AddMedia = ({ api, apiList }) => {
 		xhr.send(formData);
 	};
 
+	const selectedType = mediaTypes.find(t => t.value === mediaType);
+
 	return (
-		<div className="w-full bg-zinc-900/70 border border-zinc-700 rounded-xl p-4 flex flex-col gap-4 overflow-auto">
-			<h2 className="text-sm text-zinc-300 font-semibold">Add Media</h2>
+		<div className={`p-4 rounded-xl border ${dark ? "bg-zinc-800/30 border-zinc-700" : "bg-white/20 border-zinc-200 shadow-sm"}`}>
+			<h2 className="font-bold mb-6 flex items-center gap-2">
+				<FaUpload className={dark ? "text-blue-400" : "text-blue-500"} />
+				Upload Media
+			</h2>
 
-			<select
-				value={selectApi}
-				onChange={(e) => setSelectApi(e.target.value)}
-				className="bg-zinc-800 px-3 py-2 rounded border border-zinc-700 text-sm"
-			>
-				<option value="" disabled>Select API</option>
-				{apiList.map((i, idx) => (
-					<option key={idx} value={i}>{api}{i}</option>
-				))}
-			</select>
-
-			<div className="flex flex-row items-center gap-2">
-				{selectApi && (
+			<div className="space-y-4">
+				<div>
+					<label className={`block text-sm font-medium mb-2 ${dark ? "text-zinc-400" : "text-zinc-600"}`}>Select Domain</label>
 					<select
-						value={mediaType}
-						onChange={(e) => setMediaType(e.target.value)}
-						className="bg-zinc-800 px-3 py-2 rounded border border-zinc-700 text-sm"
+						value={selectApi}
+						onChange={(e) => setSelectApi(e.target.value)}
+						className={`w-full px-4 py-3 rounded-lg border outline-none text-sm ${dark ? "bg-zinc-900 border-zinc-700 text-white" : "bg-white border-zinc-300 text-zinc-900"}`}
 					>
-						<option value="" disabled>Select Media Type</option>
-						<option value="videos">Videos</option>
-						<option value="images">Images</option>
-						<option value="audios">Audios</option>
-						<option value="documents">Documents</option>
+						<option value="" disabled>Choose a domain</option>
+						{apiList.map((i, idx) => (
+						<option key={idx} value={i}>{api}{i}</option>
+						))}
 					</select>
+				</div>
+
+				{selectApi && (
+				<div>
+					<label className={`block text-sm font-medium mb-2 ${dark ? "text-zinc-400" : "text-zinc-600"}`}>Media Type</label>
+					<div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+					{mediaTypes.map((type) => (
+						<button
+							key={type.value}
+							onClick={() => setMediaType(type.value)}
+							className={`flex flex-col items-center p-3 rounded-lg border transition-all ${
+								mediaType === type.value
+								? dark
+									? "bg-blue-500/20 border-blue-500/50 text-blue-400"
+									: "bg-blue-50 border-blue-300 text-blue-600"
+								: dark
+								? "bg-zinc-900 border-zinc-700 hover:border-zinc-600"
+								: "bg-white border-zinc-200 hover:border-zinc-300"
+							}`}
+						>
+							<div className="text-lg mb-1">{type.icon}</div>
+							<span className="text-xs">{type.label}</span>
+						</button>
+					))}
+					</div>
+				</div>
 				)}
 
 				{mediaType && (
-					<input
-						type="file"
-						accept={getAcceptType()}
-						onChange={handleFileChange}
-						className="ml-auto file:bg-zinc-800 file:text-zinc-200 file:border-0 file:px-3 file:py-1 file:rounded text-sm"
-					/>
+				<div>
+					<label className={`block text-sm font-medium mb-2 ${dark ? "text-zinc-400" : "text-zinc-600"}`}>Choose File</label>
+					<div className="flex flex-col sm:flex-row gap-3">
+						<label className={`flex-1 cursor-pointer p-4 rounded-lg border-2 border-dashed text-center transition-all ${
+							dark
+							? "border-zinc-700 hover:border-zinc-600 bg-zinc-900/50"
+							: "border-zinc-300 hover:border-zinc-400 bg-zinc-50/50"
+						}`}>
+							<input
+								type="file"
+								accept={selectedType?.accept}
+								onChange={handleFileChange}
+								className="hidden"
+							/>
+							<div className="flex flex-col items-center">
+								<FaFile className={`text-2xl mb-2 ${dark ? "text-zinc-500" : "text-zinc-400"}`} />
+								<span className={`text-sm ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
+									{file ? file.name : "Click to select file"}
+								</span>
+								<span className={`text-xs mt-1 ${dark ? "text-zinc-500" : "text-zinc-500"}`}>
+									{selectedType?.accept}
+								</span>
+							</div>
+						</label>
+					
+						{file && !uploading && (
+							<button
+								onClick={handleAddMedia}
+								className={`w-fit h-fit mt-auto flex items-center justify-center gap-2 px-6 py-4 rounded-lg font-medium transition-all ${
+									dark
+									? "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+									: "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+								} text-white`}
+							>
+								<FaUpload />
+								Upload Now
+							</button>
+						)}
+					</div>
+				</div>
 				)}
 
-				{file && !uploading && progress === 0 && (
-					<button
-						onClick={handleAddMedia}
-						className="self-end bg-green-600/20 text-green-400 px-4 py-2 rounded hover:bg-green-600/30 text-sm"
-					>
-						Upload
-					</button>
-				)}
-
-			</div>
-			{uploading && (
-				<div className="w-full">
-					<div className="h-2 bg-zinc-700 rounded overflow-hidden">
+				{uploading && (
+				<div>
+					<div className="flex justify-between text-xs mb-1">
+						<span className={dark ? "text-zinc-400" : "text-zinc-600"}>Uploading...</span>
+						<span className="font-medium">{progress}%</span>
+					</div>
+					<div className={`h-2 rounded-full overflow-hidden ${dark ? "bg-zinc-700" : "bg-zinc-200"}`}>
 						<div
-							className="h-full bg-green-500 transition-all"
+							className="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-300"
 							style={{ width: `${progress}%` }}
 						/>
 					</div>
-					<p className="text-xs text-zinc-400 mt-1">{progress}%</p>
 				</div>
-			)}
+				)}
 
-			{message?.success && (
-				<p className="text-green-400 bg-green-600/20 px-3 py-1 rounded text-sm w-fit">
-					{message.success}
-				</p>
-			)}
+				{message && (
+				<div className={`p-3 rounded-lg flex items-center gap-2 ${
+					message.success
+					? dark ? "bg-green-900/20 text-green-400" : "bg-green-50 text-green-700"
+					: dark ? "bg-red-900/20 text-red-400" : "bg-red-50 text-red-700"
+				}`}>
+					{message.success ? <FaCheck /> : <FaTimes />}
+					<span className="text-sm">{message.success || message.error}</span>
+				</div>
+				)}
 
-			{message?.error && (
-				<p className="text-red-400 bg-red-600/20 px-3 py-1 rounded text-sm w-fit">
-					{message.error}
-				</p>
-			)}
-
-			{data && (
-				<pre className="bg-zinc-950 p-3 rounded text-xs max-h-40 overflow-auto custom-scrollbar">
-					{JSON.stringify(data, null, 2)}
-				</pre>
-			)}
+				{data && (
+				<div className="">
+					<h3 className={`text-sm font-medium mb-2 ${dark ? "text-zinc-400" : "text-zinc-600"}`}>Response</h3>
+					<pre className={`p-3 rounded-lg text-xs max-h-40 overflow-auto custom-scrollbar ${
+						dark ? "bg-zinc-900 text-zinc-300" : "bg-zinc-100 text-zinc-800"
+						}`}>
+						{JSON.stringify(data, null, 2)}
+					</pre>
+				</div>
+				)}
+			</div>
 		</div>
 	);
 };

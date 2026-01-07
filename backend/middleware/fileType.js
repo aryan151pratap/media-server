@@ -3,7 +3,8 @@ const typeMap = {
     "image/jpeg",
     "image/png",
     "image/webp",
-    "image/gif"
+    "image/gif",
+    "image/avif"
   ],
 
   videos: [

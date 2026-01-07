@@ -1,11 +1,11 @@
 import { useRef, useState } from "react";
 import { FaPlay, FaPause, FaCopy, FaCheck, FaDownload, FaExpand, FaTimes, FaVolumeUp, FaVolumeMute } from "react-icons/fa";
 
-const Videos = ({ url, i, size }) => {
+const Videos = ({ url, i, size, dark }) => {
 	const videoRef = useRef(null);
 	const [playing, setPlaying] = useState(false);
 	const [speed, setSpeed] = useState(1);
-	const [copied, setCopied] = useState(false);
+	const [copied, setCopied] = useState(false); 
 	const [progress, setProgress] = useState(0);
 	const [duration, setDuration] = useState(0);
 	const [open, setOpen] = useState(false);
@@ -84,8 +84,8 @@ const Videos = ({ url, i, size }) => {
 
 
 	return (
-		<div className="p-1 bg-black">
-			<div className="relative w-full max-w-xl group bg-zinc-900 rounded overflow-hidden shadow-lg border border-zinc-300/20 hover:border-zinc-300/50">
+		<div className={`p-1 ${dark ? "bg-black" : "bg-zinc-900 text-white"}`}>
+			<div className={`relative w-full max-w-xl group bg-zinc-900 rounded overflow-hidden shadow-lg border border-zinc-300/20 hover:border-zinc-300/50`}>
 				<div className="absolute z-50 inset-0 top-20 left-[88%] h-fit w-fit p-3 flex flex-row items-center gap-2 rotate-[-90deg] group/volume">
 				
 					<button
@@ -104,7 +104,7 @@ const Videos = ({ url, i, size }) => {
 						className="absolute inset-0 top-0 left-[8px] hidden group-hover/volume:flex w-16 accent-red-500 cursor-pointer"
 					/>
 				</div>
-				<div className="hidden group-hover:flex group-hover:text-zinc-300 bg-zinc-900/90 absolute inset-0 h-6 bg-zinc-300/20 p-1 text-xs line-clamp-1 break-all">
+				<div className={`hidden group-hover:flex ${dark ? "bg-zinc-900/90 group-hover:text-zinc-300" : "bg-white/50 text-black"} absolute inset-0 h-6 p-1 text-xs line-clamp-1 break-all`}>
 					{i}
 				</div>
 				<video
@@ -138,7 +138,7 @@ const Videos = ({ url, i, size }) => {
 							onChange={handleSeek}
 							className="hidden group-hover:flex w-full h-1 z-60 accent-red-500 cursor-pointer"
 						/>
-						<div className="hidden group-hover:flex flex flex-row items-center justify-between px-4 py-1 bg-black/40">
+						<div className="text-white hidden group-hover:flex flex flex-row items-center justify-between px-4 py-1 bg-black/40">
 							<button
 								onClick={togglePlay}
 								className="p-2 rounded-full bg-zinc-700/30 hover:bg-zinc-900/80"
