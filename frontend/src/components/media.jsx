@@ -13,7 +13,7 @@ const Media = function ({ user, dark }) {
 	const [currFolder, setCurrFolder] = useState("");
 	const [allData, setAllData] = useState([]);
 	const [currUser, setCurrUser] = useState(null);
-	const [change, setChange] = useState(false);
+	const [change, setChange] = useState(true);
 	const [currId, setCurrId] = useState(null);
 	const [fullMedia, setFullMedia] = useState(false);
 
@@ -99,7 +99,8 @@ const Media = function ({ user, dark }) {
 				}
 
 				{user.role == "admin" && change &&
-				<select className="px-2 p-1 outline-none border border-zinc-300/30 focus:border-zinc-300/50 rounded"
+				<select 
+					className={`ml-auto outline-none px-2 p-1 rounded ${dark ? "bg-zinc-900/90 text-zinc-100 border border-zinc-700/20 focus:border-zinc-500/40" : "bg-zinc-50 text-zinc-900 border border-zinc-200/30 focus:border-blue-200"}`}
 					value={currId}
 					onChange={(e) => {
 						setCurrId(e.target.value);
